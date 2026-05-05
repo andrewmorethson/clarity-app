@@ -28,7 +28,17 @@ export default function Dashboard() {
     setTimeout(() => setToasts(t => t.filter(x => x.id !== id)), 3500)
   }
 
-  if (status === 'loading') return (
+  async function connectTikTok() {
+    try {
+      showToast("Abrindo TikTok...", "info")
+      const res = await fetch("/api/tiktok/auth-url")
+      const data = await res.json()
+      if (data.url) { window.location.href = data.url }
+      else { showToast("Erro ao gerar link do TikTok", "error") }
+    } catch { showToast("Erro de conexão", "error") }
+  }
+
+  if (status === "loading") return (
     <div style={{ minHeight:'100vh', display:'flex', alignItems:'center', justifyContent:'center', background:'#08080e', flexDirection:'column', gap:'16px' }}>
       <div style={{ width:'40px', height:'40px', border:'3px solid rgba(255,255,255,0.1)', borderTop:'3px solid #00e5ff', borderRadius:'50%', animation:'spin .8s linear infinite' }}/>
       <style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style>
@@ -288,7 +298,7 @@ function AgencyScreen({ onNav }: { onNav: (s:string)=>void }) {
       </div>
       <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:'14px' }}>
         <span style={{ fontWeight:700, fontSize:'15px' }}>Contas Monitoradas</span>
-        <button className="btn-primary">+ Adicionar conta</button>
+        <button className="btn-primary" onClick={connectTikTok}>+ Adicionar conta</button>
       </div>
       <div className="acc-grid" style={{ display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:'14px' }}>
         {accounts.map(a => (
@@ -643,7 +653,7 @@ function SettingsScreen({ user }: { user: any }) {
                 <button className={a.statusOk ? 'btn-danger' : 'btn-primary'} style={{ fontSize:'11px', padding:'5px 12px' }}>{a.statusOk ? 'Desconectar' : 'Reconectar'}</button>
               </div>
             ))}
-            <button className="btn-outline" style={{ width:'100%', padding:'10px', marginTop:'4px' }}>+ Adicionar conta</button>
+            <button className="btn-outline" style={{ width:'100%', padding:'10px', marginTop:'4px' }} onClick={connectTikTok}>+ Adicionar conta</button>
           </div>
         </div>
         <div>
