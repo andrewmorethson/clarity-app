@@ -2,6 +2,23 @@ import NextAuth, { type NextAuthOptions } from 'next-auth'
 import CredentialsProvider from 'next-auth/providers/credentials'
 import crypto from 'crypto'
 
+const SUPABASE_URL = 'https://okmmmtzaxcmmcvveqzfc.supabase.co'
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9rbW1tdHpheGNtbWN2dmVxemZjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc5ODc1NjUsImV4cCI6MjA5MzU2MzU2NX0.ZGDUCW1HMsX6-fWuwC9XgUCk4m74QKyYTnE0alftS-4'
+
+async function supabase(path: string, options: any = {}) {
+  const res = await fetch(`${SUPABASE_URL}/rest/v1${path}`, {
+    headers: {
+      'apikey': SUPABASE_ANON_KEY,
+      'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+    ...options,
+  })
+  const data = await res.json().catch(() => null)
+  return { ok: res.ok, status: res.status, data }
+}
+
 export function hashPassword(password: string): string {
   const salt = crypto.randomBytes(16).toString('hex')
   const hash = crypto.pbkdf2Sync(password, salt, 100000, 64, 'sha512').toString('hex')
@@ -24,8 +41,6 @@ export function validatePasswordStrength(password: string) {
   if (!/[a-z]/.test(password)) { errors.push('Pelo menos uma letra minúscula (a-z)') } else score += 1
   if (!/[0-9]/.test(password)) { errors.push('Pelo menos um número (0-9)') } else score += 1
   if (!/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password)) { errors.push('Pelo menos um símbolo (!@#$%^&*...)') } else score += 2
-  const common = ['12345678', 'password', 'senha123', 'qwerty', 'abc123']
-  if (common.some(c => password.toLowerCase().includes(c))) { errors.push('Senha muito comum'); score = Math.max(0, score - 2) }
   const label = score <= 2 ? 'Fraca' : score <= 4 ? 'Média' : score <= 6 ? 'Forte' : 'Muito forte'
   return { valid: errors.length === 0, errors, score, label }
 }
@@ -40,17 +55,20 @@ export const authOptions: NextAuthOptions = {
       },
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) return null
+        const cleanEmail = credentials.email.toLowerCase().trim()
+
         try {
-          const { PrismaClient } = await import('@prisma/client')
-          const prisma = new PrismaClient()
-          // Usar any para evitar erro de tipo quando schema não foi regenerado
-          const user = await (prisma.user.findUnique as any)({
-            where: { email: credentials.email.toLowerCase().trim() },
-          }) as any
-          await prisma.$disconnect()
-          if (!user || !user.password_hash) return null
+          // Buscar usuário via Supabase REST API
+          const result = await supabase(`/users?email=eq.${encodeURIComponent(cleanEmail)}&select=id,email,name,plan,password_hash`)
+          
+          if (!result.ok || !result.data?.length) return null
+          
+          const user = result.data[0]
+          if (!user.password_hash) return null
+          
           const valid = verifyPassword(credentials.password, user.password_hash)
           if (!valid) return null
+
           return { id: user.id, email: user.email, name: user.name, plan: user.plan }
         } catch (err) {
           console.error('Auth error:', err)
