@@ -1,0 +1,72 @@
+// prisma/schema.prisma
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String?
+  plan      String   @default("starter") // starter | pro | agency
+  caktoId   String?  // ID do cliente no Cakto
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  accounts  TikTokAccount[]
+  alerts    Alert[]
+}
+
+model TikTokAccount {
+  id           String   @id @default(cuid())
+  userId       String
+  tiktokUserId String   @unique
+  username     String
+  displayName  String
+  accessToken  String
+  refreshToken String
+  tokenExpiry  DateTime
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  user         User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  snapshots    Snapshot[]
+  alerts       Alert[]
+}
+
+model Snapshot {
+  id            String   @id @default(cuid())
+  accountId     String
+  date          DateTime @default(now())
+  followers     Int
+  views         Int
+  likes         Int
+  comments      Int
+  shares        Int
+  engagementRate Float
+  completionRate Float?
+  topVideoId    String?
+  rawData       Json?
+
+  account       TikTokAccount @relation(fields: [accountId], references: [id], onDelete: Cascade)
+}
+
+model Alert {
+  id        String   @id @default(cuid())
+  userId    String
+  accountId String?
+  type      String   // shadowban | engagement_drop | token_expired | schedule_failed | monetization_close
+  severity  String   // critical | warning | info
+  title     String
+  message   String
+  resolved  Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  user      User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  account   TikTokAccount? @relation(fields: [accountId], references: [id])
+}

@@ -1,0 +1,1433 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clarity — PRV Completo</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;500;600;700;800&family=Epilogue:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #08080e;
+  --surface: #0f0f18;
+  --surface2: #14141f;
+  --surface3: #1a1a28;
+  --border: rgba(255,255,255,0.06);
+  --border2: rgba(255,255,255,0.1);
+  --accent: #00e5ff;
+  --accent-glow: rgba(0,229,255,0.15);
+  --accent2: #ff4d6d;
+  --accent3: #c77dff;
+  --accent4: #06d6a0;
+  --warn: #ffd166;
+  --text: #eeeef5;
+  --muted: #5a5a72;
+  --muted2: #8888a0;
+  --card: #0f0f1a;
+  --radius: 14px;
+  --radius-sm: 8px;
+  --radius-lg: 20px;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  font-family: 'Epilogue', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ===================== TYPOGRAPHY ===================== */
+.display { font-family: 'Bricolage Grotesque', sans-serif; }
+
+/* ===================== LAYOUT ===================== */
+.app { display: flex; min-height: 100vh; }
+
+.sidebar {
+  width: 240px;
+  flex-shrink: 0;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  top:0; bottom:0; left:0;
+  z-index: 100;
+  overflow-y: auto;
+  transition: transform .3s ease;
+}
+
+.main {
+  margin-left: 240px;
+  flex: 1;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ===================== SIDEBAR ===================== */
+.logo-area {
+  padding: 28px 22px 24px;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 10px;
+}
+
+.logo-mark {
+  width: 32px; height: 32px;
+  background: var(--accent);
+  border-radius: 9px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px;
+  box-shadow: 0 0 20px rgba(0,229,255,0.4);
+}
+
+.logo-text {
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-weight: 800;
+  font-size: 19px;
+  letter-spacing: -0.5px;
+}
+
+.logo-beta {
+  font-size: 9px;
+  background: rgba(0,229,255,0.15);
+  color: var(--accent);
+  padding: 2px 7px;
+  border-radius: 20px;
+  border: 1px solid rgba(0,229,255,0.25);
+  font-family: 'Epilogue', sans-serif;
+  font-weight: 500;
+}
+
+/* Account selector */
+.account-selector {
+  margin: 16px 12px;
+  background: var(--surface2);
+  border: 1px solid var(--border2);
+  border-radius: var(--radius);
+  padding: 10px 14px;
+  cursor: pointer;
+  display: flex; align-items: center; gap: 10px;
+  transition: all .2s;
+}
+.account-selector:hover { border-color: var(--accent); }
+
+.acc-sel-avatar {
+  width: 32px; height: 32px; border-radius: 9px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px; flex-shrink: 0;
+}
+
+.acc-sel-info { flex: 1; min-width: 0; }
+.acc-sel-name { font-size: 13px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.acc-sel-handle { font-size: 11px; color: var(--muted2); }
+.acc-sel-arrow { color: var(--muted); font-size: 12px; }
+
+/* Nav */
+.nav { padding: 8px 10px; flex:1; }
+
+.nav-group-label {
+  font-size: 10px; text-transform: uppercase; letter-spacing: 1.5px;
+  color: var(--muted); padding: 16px 12px 6px; font-weight: 600;
+}
+
+.nav-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 9px 12px; border-radius: var(--radius-sm);
+  cursor: pointer; font-size: 13.5px; color: var(--muted2);
+  transition: all .18s; margin-bottom: 1px;
+  position: relative;
+}
+.nav-item:hover { background: var(--surface2); color: var(--text); }
+.nav-item.active { background: rgba(0,229,255,0.08); color: var(--accent); font-weight: 500; }
+.nav-item.active::before {
+  content: '';
+  position: absolute; left: 0; top: 20%; bottom: 20%;
+  width: 3px; background: var(--accent);
+  border-radius: 0 3px 3px 0;
+}
+
+.nav-icon { font-size: 15px; width: 20px; text-align: center; }
+
+.nav-badge {
+  margin-left: auto; background: var(--accent2); color: #fff;
+  font-size: 10px; padding: 1px 6px; border-radius: 10px; font-weight: 600;
+}
+
+.nav-badge-warn {
+  margin-left: auto; background: rgba(255,209,102,0.15); color: var(--warn);
+  font-size: 10px; padding: 1px 6px; border-radius: 10px;
+}
+
+/* Plan card */
+.plan-card {
+  margin: 12px;
+  background: linear-gradient(135deg, rgba(199,125,255,0.12), rgba(0,229,255,0.06));
+  border: 1px solid rgba(199,125,255,0.2);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+}
+.plan-name {
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-size: 13px; font-weight: 700; color: var(--accent3); margin-bottom: 4px;
+}
+.plan-info { font-size: 11.5px; color: var(--muted2); line-height: 1.6; }
+.plan-upgrade {
+  margin-top: 10px; width: 100%;
+  background: rgba(199,125,255,0.15); border: 1px solid rgba(199,125,255,0.3);
+  color: var(--accent3); font-size: 11.5px; font-weight: 600;
+  padding: 6px; border-radius: var(--radius-sm); cursor: pointer;
+  transition: all .2s; font-family: 'Epilogue', sans-serif;
+}
+.plan-upgrade:hover { background: rgba(199,125,255,0.25); }
+
+/* ===================== TOPBAR ===================== */
+.topbar {
+  height: 60px; border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 28px; background: var(--bg);
+  position: sticky; top:0; z-index: 50;
+}
+
+.topbar-title {
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-size: 17px; font-weight: 700;
+  display: flex; align-items: center; gap: 10px;
+}
+
+.live-pill {
+  display: flex; align-items: center; gap: 5px;
+  background: rgba(6,214,160,0.1); border: 1px solid rgba(6,214,160,0.2);
+  color: var(--accent4); font-size: 10px; font-weight: 600;
+  padding: 3px 9px; border-radius: 20px; font-family: 'Epilogue', sans-serif;
+}
+.live-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--accent4); animation: blink 1.5s infinite; }
+
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:.3} }
+
+.topbar-right { display: flex; align-items: center; gap: 12px; }
+
+.period-toggle {
+  display: flex; background: var(--surface); border: 1px solid var(--border2);
+  border-radius: var(--radius-sm); padding: 3px; gap: 2px;
+}
+.period-btn {
+  padding: 5px 14px; border-radius: 6px; font-size: 12px;
+  cursor: pointer; color: var(--muted2); transition: all .2s;
+  background: none; border: none; font-family: 'Epilogue', sans-serif;
+}
+.period-btn.active { background: var(--surface2); color: var(--text); font-weight: 500; }
+
+.topbar-avatar {
+  width: 34px; height: 34px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent3), var(--accent));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 700; cursor: pointer;
+}
+
+.hamburger {
+  display: none; flex-direction: column; gap: 4px; cursor: pointer; padding: 4px;
+}
+.hamburger span { display:block; width:20px; height:2px; background:var(--text); border-radius:2px; transition: all .3s; }
+
+/* ===================== CONTENT ===================== */
+.content { padding: 28px; flex:1; }
+
+/* SCREENS */
+.screen { display: none; animation: fadeUp .35s ease both; }
+.screen.active { display: block; }
+
+@keyframes fadeUp {
+  from { opacity:0; transform: translateY(14px); }
+  to { opacity:1; transform: translateY(0); }
+}
+
+/* ===================== COMPONENTS ===================== */
+
+/* Page header */
+.page-hdr { margin-bottom: 24px; }
+.page-title { font-family:'Bricolage Grotesque',sans-serif; font-size:22px; font-weight:800; margin-bottom:4px; }
+.page-sub { font-size:13.5px; color:var(--muted2); }
+
+/* Stat grid */
+.stat-grid { display: grid; grid-template-columns: repeat(4,1fr); gap:14px; margin-bottom:22px; }
+
+.stat-card {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 18px 20px; position: relative; overflow: hidden;
+}
+.stat-card::after {
+  content: ''; position: absolute; top:0; left:0; right:0; height:2px;
+}
+.stat-card.c-cyan::after { background: var(--accent); }
+.stat-card.c-pink::after { background: var(--accent2); }
+.stat-card.c-purple::after { background: var(--accent3); }
+.stat-card.c-green::after { background: var(--accent4); }
+.stat-card.c-warn::after { background: var(--warn); }
+
+.stat-label { font-size:11px; color:var(--muted2); text-transform:uppercase; letter-spacing:.6px; margin-bottom:8px; }
+.stat-val { font-family:'Bricolage Grotesque',sans-serif; font-size:26px; font-weight:800; margin-bottom:4px; }
+.stat-delta { font-size:11.5px; display:flex; align-items:center; gap:4px; }
+.up { color: var(--accent4); }
+.down { color: var(--accent2); }
+.neutral { color: var(--warn); }
+
+/* Cards */
+.card {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 22px;
+}
+
+.card-title {
+  font-family:'Bricolage Grotesque',sans-serif; font-size:14px; font-weight:700;
+  margin-bottom:18px; display:flex; align-items:center; justify-content:space-between;
+}
+
+.card-tag {
+  font-size:10.5px; padding:3px 9px; border-radius:20px;
+  font-family:'Epilogue',sans-serif; font-weight:500;
+}
+.tag-up { background:rgba(6,214,160,0.1); color:var(--accent4); }
+.tag-down { background:rgba(255,77,109,0.1); color:var(--accent2); }
+.tag-warn { background:rgba(255,209,102,0.1); color:var(--warn); }
+.tag-info { background:rgba(0,229,255,0.1); color:var(--accent); }
+
+/* Grid layouts */
+.grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+.grid-3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:14px; }
+.grid-2-1 { display:grid; grid-template-columns:2fr 1fr; gap:16px; }
+
+/* ---- ACCOUNT CARDS ---- */
+.account-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-bottom:24px; }
+
+.acc-card {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 18px; cursor: pointer;
+  transition: all .2s; position: relative; overflow: hidden;
+}
+.acc-card:hover { border-color: rgba(0,229,255,0.25); transform: translateY(-2px); box-shadow: 0 8px 30px rgba(0,0,0,.3); }
+.acc-card.alert-card { border-color: rgba(255,77,109,0.25); }
+.acc-card.warn-card { border-color: rgba(255,209,102,0.2); }
+
+.acc-card-top { display:flex; align-items:center; gap:10px; margin-bottom:14px; }
+.acc-av { width:38px; height:38px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:17px; flex-shrink:0; }
+.acc-name { font-family:'Bricolage Grotesque',sans-serif; font-size:13.5px; font-weight:700; margin-bottom:1px; }
+.acc-handle { font-size:11px; color:var(--muted2); }
+.acc-status { margin-left:auto; padding:3px 9px; border-radius:20px; font-size:10.5px; font-weight:600; }
+.s-ok { background:rgba(6,214,160,0.1); color:var(--accent4); }
+.s-alert { background:rgba(255,77,109,0.1); color:var(--accent2); }
+.s-warn { background:rgba(255,209,102,0.1); color:var(--warn); }
+.s-off { background:rgba(255,255,255,0.05); color:var(--muted2); }
+
+.acc-metrics { display:grid; grid-template-columns:repeat(3,1fr); gap:6px; }
+.acc-m { text-align:center; }
+.acc-m-val { font-family:'Bricolage Grotesque',sans-serif; font-size:14px; font-weight:800; margin-bottom:1px; }
+.acc-m-lbl { font-size:9.5px; color:var(--muted2); text-transform:uppercase; letter-spacing:.4px; }
+
+.mini-prog { height:3px; background:var(--border2); border-radius:2px; margin-top:12px; overflow:hidden; }
+.mini-prog-fill { height:100%; border-radius:2px; transition: width 1.2s cubic-bezier(.16,1,.3,1); }
+
+/* ---- ALERTS ---- */
+.alert-list { display:flex; flex-direction:column; gap:10px; }
+
+.alert-row {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 14px 16px;
+  display: flex; align-items: flex-start; gap: 12px;
+}
+.alert-row.crit { border-color: rgba(255,77,109,0.2); }
+.alert-row.warn { border-color: rgba(255,209,102,0.15); }
+.alert-row.info { border-color: rgba(0,229,255,0.15); }
+.alert-row.success { border-color: rgba(6,214,160,0.15); }
+
+.alert-ico { width:34px; height:34px; border-radius:9px; display:flex; align-items:center; justify-content:center; font-size:15px; flex-shrink:0; }
+.ico-crit { background:rgba(255,77,109,0.1); }
+.ico-warn { background:rgba(255,209,102,0.1); }
+.ico-info { background:rgba(0,229,255,0.1); }
+.ico-success { background:rgba(6,214,160,0.1); }
+
+.alert-body { flex:1; }
+.alert-title { font-size:13px; font-weight:600; margin-bottom:3px; }
+.alert-desc { font-size:12px; color:var(--muted2); line-height:1.5; }
+.alert-meta { display:flex; align-items:center; gap:8px; margin-top:6px; }
+.alert-time { font-size:11px; color:var(--muted); }
+.alert-action { font-size:11px; color:var(--accent); cursor:pointer; }
+
+/* ---- DIAGNOSIS ---- */
+.diag-list { display:flex; flex-direction:column; gap:12px; }
+
+.diag-item {
+  display:flex; gap:12px; padding-bottom:12px;
+  border-bottom:1px solid var(--border);
+}
+.diag-item:last-child { border-bottom:none; padding-bottom:0; }
+
+.diag-bullet { width:6px; height:6px; border-radius:50%; margin-top:5px; flex-shrink:0; }
+.diag-txt { font-size:13px; line-height:1.55; }
+.diag-strong { font-weight:600; color:var(--text); }
+.diag-sub { font-size:11.5px; color:var(--muted2); margin-top:3px; }
+
+/* ---- CHART SVG ---- */
+.chart-wrap { width:100%; overflow:hidden; }
+.chart-svg { width:100%; }
+
+/* ---- PROGRESS RING ---- */
+.ring-wrap { position:relative; display:inline-flex; }
+.ring-label { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; }
+.ring-pct { font-family:'Bricolage Grotesque',sans-serif; font-size:20px; font-weight:800; color:var(--accent); }
+.ring-lbl-sm { font-size:9.5px; color:var(--muted2); }
+
+/* ---- CHECKLIST ---- */
+.check-list { display:flex; flex-direction:column; gap:9px; }
+
+.check-row {
+  background: var(--surface2); border:1px solid var(--border);
+  border-radius: var(--radius-sm); padding:12px 15px;
+  display:flex; align-items:center; gap:12px;
+}
+.check-ico { font-size:16px; width:24px; text-align:center; flex-shrink:0; }
+.check-lbl { flex:1; font-size:13px; }
+.check-val { font-size:12.5px; font-weight:600; text-align:right; }
+.check-need { font-size:10.5px; color:var(--muted2); text-align:right; }
+.col-ok { color:var(--accent4); }
+.col-warn { color:var(--warn); }
+.col-bad { color:var(--accent2); }
+.col-cyan { color:var(--accent); }
+
+/* ---- SCHEDULE ---- */
+.schedule-grid {
+  display: grid;
+  grid-template-columns: repeat(7,1fr);
+  gap: 6px;
+  margin-bottom: 20px;
+}
+.sched-day { text-align:center; }
+.sched-day-lbl { font-size:10px; color:var(--muted2); text-transform:uppercase; letter-spacing:.5px; margin-bottom:6px; }
+.sched-slot { height:36px; border-radius:6px; margin-bottom:4px; display:flex; align-items:center; justify-content:center; font-size:9px; cursor:pointer; transition:all .15s; border:1px solid transparent; }
+.slot-empty { background:var(--surface2); color:var(--muted); border-color:var(--border); }
+.slot-empty:hover { border-color:var(--accent); color:var(--accent); }
+.slot-scheduled { background:rgba(0,229,255,0.1); color:var(--accent); border-color:rgba(0,229,255,0.25); }
+.slot-posted { background:rgba(6,214,160,0.08); color:var(--accent4); border-color:rgba(6,214,160,0.2); }
+.slot-failed { background:rgba(255,77,109,0.08); color:var(--accent2); border-color:rgba(255,77,109,0.2); }
+
+/* ---- REPORT ---- */
+.report-card {
+  background: var(--card); border:1px solid var(--border);
+  border-radius: var(--radius); padding:20px;
+  display:flex; align-items:flex-start; gap:16px; margin-bottom:12px;
+}
+.report-ico { width:44px; height:44px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:20px; flex-shrink:0; }
+.report-info { flex:1; }
+.report-name { font-size:14px; font-weight:600; margin-bottom:3px; }
+.report-meta { font-size:12px; color:var(--muted2); }
+.report-actions { display:flex; gap:8px; margin-top:10px; }
+.btn-sm {
+  padding:6px 14px; border-radius:var(--radius-sm); font-size:12px;
+  font-weight:500; cursor:pointer; transition:all .2s; border:none;
+  font-family:'Epilogue',sans-serif;
+}
+.btn-outline { background:none; border:1px solid var(--border2); color:var(--text); }
+.btn-outline:hover { border-color:var(--accent); color:var(--accent); }
+.btn-primary { background:var(--accent); color:#08080e; font-weight:700; }
+.btn-primary:hover { box-shadow:0 0 16px rgba(0,229,255,.4); }
+.btn-danger { background:rgba(255,77,109,0.1); border:1px solid rgba(255,77,109,0.2); color:var(--accent2); }
+
+/* ---- SETTINGS ---- */
+.settings-section { margin-bottom:28px; }
+.settings-title { font-family:'Bricolage Grotesque',sans-serif; font-size:15px; font-weight:700; margin-bottom:14px; padding-bottom:10px; border-bottom:1px solid var(--border); }
+
+.setting-row {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:13px 0; border-bottom:1px solid var(--border);
+}
+.setting-row:last-child { border-bottom:none; }
+.setting-lbl { font-size:13.5px; }
+.setting-sub { font-size:11.5px; color:var(--muted2); margin-top:2px; }
+
+/* Toggle */
+.toggle { position:relative; width:40px; height:22px; }
+.toggle input { opacity:0; width:0; height:0; position:absolute; }
+.toggle-track {
+  position:absolute; inset:0; background:var(--surface3); border-radius:20px;
+  cursor:pointer; transition:all .25s; border:1px solid var(--border2);
+}
+.toggle input:checked + .toggle-track { background:var(--accent); border-color:var(--accent); }
+.toggle-track::after {
+  content:''; position:absolute; width:16px; height:16px;
+  background:#fff; border-radius:50%; top:2px; left:2px; transition:all .25s;
+}
+.toggle input:checked + .toggle-track::after { transform:translateX(18px); }
+
+/* ---- PRICING ---- */
+.pricing-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-bottom:24px; }
+
+.price-card {
+  background:var(--card); border:1px solid var(--border);
+  border-radius:var(--radius-lg); padding:24px; position:relative;
+}
+.price-card.featured {
+  border-color:rgba(0,229,255,0.3);
+  background: linear-gradient(180deg, rgba(0,229,255,0.04) 0%, var(--card) 100%);
+}
+.price-popular {
+  position:absolute; top:-12px; left:50%; transform:translateX(-50%);
+  background:var(--accent); color:#08080e; font-size:10px; font-weight:800;
+  padding:4px 14px; border-radius:20px; white-space:nowrap;
+  font-family:'Bricolage Grotesque',sans-serif;
+}
+.price-name { font-family:'Bricolage Grotesque',sans-serif; font-size:15px; font-weight:700; margin-bottom:6px; }
+.price-val { font-family:'Bricolage Grotesque',sans-serif; font-size:34px; font-weight:800; margin-bottom:4px; }
+.price-val span { font-size:16px; font-weight:400; color:var(--muted2); }
+.price-period { font-size:12px; color:var(--muted2); margin-bottom:18px; }
+.price-features { list-style:none; display:flex; flex-direction:column; gap:8px; margin-bottom:20px; }
+.price-features li { font-size:12.5px; display:flex; gap:8px; align-items:flex-start; }
+.price-features li::before { content:'✓'; color:var(--accent4); font-weight:700; flex-shrink:0; }
+.price-features li.no::before { content:'—'; color:var(--muted); }
+.price-features li.no { color:var(--muted2); }
+.price-btn {
+  width:100%; padding:11px; border-radius:var(--radius-sm);
+  font-size:13px; font-weight:700; cursor:pointer; transition:all .2s;
+  font-family:'Bricolage Grotesque',sans-serif; border:none;
+}
+.price-btn-outline { background:none; border:1px solid var(--border2); color:var(--text); }
+.price-btn-outline:hover { border-color:var(--accent); color:var(--accent); }
+.price-btn-solid { background:var(--accent); color:#08080e; }
+.price-btn-solid:hover { box-shadow:0 0 20px rgba(0,229,255,.35); }
+
+/* ---- ERROR STATES ---- */
+.error-state {
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  padding: 60px 30px; text-align:center;
+}
+.error-icon { font-size:48px; margin-bottom:16px; }
+.error-title { font-family:'Bricolage Grotesque',sans-serif; font-size:20px; font-weight:800; margin-bottom:8px; }
+.error-desc { font-size:14px; color:var(--muted2); line-height:1.6; max-width:360px; margin-bottom:24px; }
+
+/* ---- ONBOARDING ---- */
+.onboard-wrap {
+  min-height:100vh; display:flex; flex-direction:column;
+  align-items:center; justify-content:center; padding:40px 20px;
+  background: radial-gradient(ellipse 60% 50% at 50% 0%, rgba(0,229,255,0.06) 0%, transparent 70%);
+}
+
+.onboard-card {
+  width:100%; max-width:520px;
+  background:var(--surface); border:1px solid var(--border2);
+  border-radius:24px; padding:40px 44px;
+}
+
+.onboard-step-bar { display:flex; gap:6px; margin-bottom:32px; }
+.onboard-step { height:3px; flex:1; border-radius:2px; background:var(--border2); transition:background .3s; }
+.onboard-step.done { background:var(--accent4); }
+.onboard-step.active { background:var(--accent); }
+
+.onboard-logo { text-align:center; margin-bottom:28px; }
+.onboard-logo .mark { width:52px; height:52px; background:var(--accent); border-radius:16px; display:flex; align-items:center; justify-content:center; font-size:24px; margin:0 auto 12px; box-shadow:0 0 30px rgba(0,229,255,.35); }
+.onboard-logo .name { font-family:'Bricolage Grotesque',sans-serif; font-size:22px; font-weight:800; }
+
+.onboard-title { font-family:'Bricolage Grotesque',sans-serif; font-size:20px; font-weight:800; margin-bottom:6px; }
+.onboard-sub { font-size:13.5px; color:var(--muted2); line-height:1.6; margin-bottom:24px; }
+
+.form-group { margin-bottom:16px; }
+.form-label { font-size:12.5px; font-weight:600; color:var(--muted2); margin-bottom:6px; display:block; }
+.form-input {
+  width:100%; background:var(--surface2); border:1px solid var(--border2);
+  border-radius:var(--radius-sm); padding:11px 14px; font-size:13.5px;
+  color:var(--text); outline:none; transition:all .2s; font-family:'Epilogue',sans-serif;
+}
+.form-input:focus { border-color:var(--accent); box-shadow:0 0 0 3px rgba(0,229,255,.1); }
+.form-input::placeholder { color:var(--muted); }
+
+.btn-full {
+  width:100%; padding:13px; border-radius:var(--radius-sm);
+  font-size:14px; font-weight:700; cursor:pointer; transition:all .2s;
+  font-family:'Bricolage Grotesque',sans-serif; border:none; margin-top:8px;
+}
+.btn-full-primary { background:var(--accent); color:#08080e; }
+.btn-full-primary:hover { box-shadow:0 0 24px rgba(0,229,255,.35); }
+.btn-full-tiktok {
+  background: linear-gradient(135deg, #010101, #1a1a1a);
+  border:1px solid rgba(255,255,255,0.12); color:#fff;
+  display:flex; align-items:center; justify-content:center; gap:10px;
+}
+.btn-full-tiktok:hover { border-color:rgba(255,255,255,0.25); }
+
+.divider { display:flex; align-items:center; gap:12px; margin:18px 0; }
+.divider::before,.divider::after { content:''; flex:1; height:1px; background:var(--border2); }
+.divider span { font-size:12px; color:var(--muted); }
+
+.auth-link { text-align:center; font-size:12.5px; color:var(--muted2); margin-top:16px; }
+.auth-link a { color:var(--accent); cursor:pointer; }
+
+/* ---- OAUTH STEP ---- */
+.tiktok-connect {
+  background: var(--surface2); border:1px solid var(--border2);
+  border-radius:var(--radius); padding:20px; margin-bottom:16px;
+  display:flex; align-items:center; gap:14px;
+}
+.tt-ico { width:44px; height:44px; border-radius:12px; background:#010101; border:1px solid rgba(255,255,255,.1); display:flex; align-items:center; justify-content:center; font-size:22px; flex-shrink:0; }
+.tt-info { flex:1; }
+.tt-title { font-size:13.5px; font-weight:600; margin-bottom:3px; }
+.tt-sub { font-size:12px; color:var(--muted2); }
+.tt-status { font-size:12px; font-weight:600; }
+
+.permission-list { display:flex; flex-direction:column; gap:8px; margin-bottom:20px; }
+.perm-item { display:flex; gap:10px; align-items:flex-start; }
+.perm-ico { font-size:15px; flex-shrink:0; margin-top:1px; }
+.perm-txt { font-size:12.5px; color:var(--muted2); line-height:1.5; }
+
+/* ---- INLINE LOADING ---- */
+.skeleton {
+  background: linear-gradient(90deg, var(--surface2) 25%, var(--surface3) 50%, var(--surface2) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s infinite;
+  border-radius:6px;
+}
+@keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+
+.loading-overlay {
+  position:fixed; inset:0; background:rgba(8,8,14,.85);
+  backdrop-filter:blur(6px); z-index:999;
+  display:flex; align-items:center; justify-content:center; flex-direction:column; gap:16px;
+}
+.loading-spinner { width:40px; height:40px; border:3px solid var(--border2); border-top-color:var(--accent); border-radius:50%; animation:spin .8s linear infinite; }
+@keyframes spin { to { transform:rotate(360deg); } }
+.loading-msg { font-size:14px; color:var(--muted2); }
+
+/* ---- TOAST ---- */
+.toast-area { position:fixed; bottom:24px; right:24px; z-index:1000; display:flex; flex-direction:column; gap:8px; }
+.toast {
+  background:var(--surface); border:1px solid var(--border2);
+  border-radius:var(--radius-sm); padding:12px 16px;
+  display:flex; align-items:center; gap:10px; min-width:280px;
+  box-shadow:0 8px 30px rgba(0,0,0,.4);
+  animation: slideIn .3s ease both;
+}
+@keyframes slideIn { from{opacity:0;transform:translateX(20px)} to{opacity:1;transform:translateX(0)} }
+.toast.success { border-color:rgba(6,214,160,.25); }
+.toast.error { border-color:rgba(255,77,109,.25); }
+.toast.warn { border-color:rgba(255,209,102,.2); }
+.toast-ico { font-size:16px; }
+.toast-txt { font-size:13px; flex:1; }
+
+/* ---- BOTTOM NAV (mobile) ---- */
+.bottom-nav {
+  display:none; position:fixed; bottom:0; left:0; right:0;
+  height:60px; background:var(--surface); border-top:1px solid var(--border);
+  z-index:200; align-items:center; justify-content:space-around; padding:0 6px;
+}
+.bnav-item { display:flex; flex-direction:column; align-items:center; gap:3px; padding:6px 12px; border-radius:10px; cursor:pointer; color:var(--muted2); font-size:9.5px; transition:all .2s; flex:1; }
+.bnav-item.active { color:var(--accent); }
+.bnav-ico { font-size:18px; }
+
+/* Sidebar overlay */
+.sb-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,.6); z-index:99; backdrop-filter:blur(2px); }
+.sb-overlay.open { display:block; }
+
+/* ---- RESPONSIVE ---- */
+@media(max-width:1100px) {
+  .stat-grid { grid-template-columns:repeat(2,1fr); }
+  .account-grid { grid-template-columns:repeat(2,1fr); }
+  .pricing-grid { grid-template-columns:1fr; }
+}
+
+@media(max-width:768px) {
+  .sidebar { transform:translateX(-100%); width:260px; z-index:200; }
+  .sidebar.open { transform:translateX(0); }
+  .main { margin-left:0; padding-bottom:60px; }
+  .bottom-nav { display:flex; }
+  .hamburger { display:flex; }
+  .topbar { padding:0 16px; height:54px; }
+  .period-toggle { display:none; }
+  .content { padding:16px; }
+  .stat-grid { grid-template-columns:repeat(2,1fr); gap:10px; }
+  .account-grid { grid-template-columns:1fr; }
+  .grid-2 { grid-template-columns:1fr; }
+  .grid-2-1 { grid-template-columns:1fr; }
+  .grid-3 { grid-template-columns:1fr; }
+  .onboard-card { padding:28px 22px; }
+  .pricing-grid { grid-template-columns:1fr; }
+}
+
+@media(max-width:420px) {
+  .stat-grid { grid-template-columns:1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- ===================== LOADING OVERLAY ===================== -->
+<div class="loading-overlay" id="loadingOverlay" style="display:none">
+  <div class="loading-spinner"></div>
+  <div class="loading-msg" id="loadingMsg">Carregando dados...</div>
+</div>
+
+<!-- ===================== TOASTS ===================== -->
+<div class="toast-area" id="toastArea"></div>
+
+<!-- ===================== ONBOARDING (shown first) ===================== -->
+<div id="onboardWrap">
+
+  <!-- Step 1: Login -->
+  <div class="onboard-wrap" id="step-login">
+    <div class="onboard-card">
+      <div class="onboard-logo">
+        <div class="mark">◈</div>
+        <div class="name">Clarity</div>
+      </div>
+      <div class="onboard-step-bar">
+        <div class="onboard-step active"></div>
+        <div class="onboard-step"></div>
+        <div class="onboard-step"></div>
+      </div>
+      <div class="onboard-title">Boas-vindas ao Clarity</div>
+      <div class="onboard-sub">Analytics inteligente para criadores e agências TikTok. Diagnósticos em linguagem humana, não números soltos.</div>
+
+      <!-- Admin hint -->
+      <div style="background:rgba(0,229,255,0.06);border:1px solid rgba(0,229,255,0.2);border-radius:var(--radius-sm);padding:10px 14px;margin-bottom:18px;display:flex;align-items:center;gap:10px">
+        <span style="font-size:14px">🔑</span>
+        <div style="font-size:12px;color:var(--muted2);line-height:1.5">
+          <strong style="color:var(--accent)">Acesso demo:</strong>
+          <span style="font-family:monospace;background:rgba(0,0,0,.3);padding:1px 6px;border-radius:4px;margin:0 4px">admin</span> /
+          <span style="font-family:monospace;background:rgba(0,0,0,.3);padding:1px 6px;border-radius:4px;margin:0 4px">teste</span>
+          <a onclick="fillAdmin()" style="color:var(--accent);cursor:pointer;margin-left:4px;text-decoration:underline">Preencher</a>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">E-mail ou usuário</label>
+        <input class="form-input" id="loginEmail" type="text" placeholder="admin">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Senha</label>
+        <div style="position:relative">
+          <input class="form-input" id="loginPassword" type="password" placeholder="••••••••" style="padding-right:44px" onkeydown="if(event.key==='Enter')doLogin()">
+          <span onclick="togglePwd()" style="position:absolute;right:14px;top:50%;transform:translateY(-50%);cursor:pointer;color:var(--muted2);font-size:14px" id="pwdEye">👁</span>
+        </div>
+      </div>
+      <div id="loginError" style="display:none;background:rgba(255,77,109,0.1);border:1px solid rgba(255,77,109,0.25);border-radius:var(--radius-sm);padding:10px 14px;font-size:12.5px;color:var(--accent2);margin-bottom:12px">
+        ❌ Credenciais inválidas. Use <strong>admin / teste</strong> para acesso demo.
+      </div>
+      <button class="btn-full btn-full-primary" onclick="doLogin()">Entrar →</button>
+      <div class="divider"><span>ou</span></div>
+      <button class="btn-full btn-full-tiktok" onclick="showApp()">
+        <span>𝕋</span> Continuar com TikTok
+      </button>
+      <div class="auth-link">Não tem conta? <a onclick="goStep('step-plan')">Criar conta grátis</a></div>
+    </div>
+  </div>
+
+  <!-- Step 2: Escolha de plano -->
+  <div class="onboard-wrap" id="step-plan" style="display:none">
+    <div style="width:100%;max-width:880px">
+      <div style="text-align:center;margin-bottom:36px">
+        <div style="font-family:'Bricolage Grotesque',sans-serif;font-size:28px;font-weight:800;margin-bottom:8px">Escolha seu plano</div>
+        <div style="font-size:14px;color:var(--muted2)">Comece grátis por 14 dias. Cancele quando quiser.</div>
+      </div>
+      <div class="onboard-step-bar" style="max-width:520px;margin:0 auto 32px">
+        <div class="onboard-step done"></div>
+        <div class="onboard-step active"></div>
+        <div class="onboard-step"></div>
+      </div>
+      <div class="pricing-grid">
+        <div class="price-card">
+          <div class="price-name">Starter</div>
+          <div class="price-val">R$49<span>/mês</span></div>
+          <div class="price-period">1 conta TikTok</div>
+          <ul class="price-features">
+            <li>Dashboard de performance</li>
+            <li>Diagnóstico IA semanal</li>
+            <li>Melhor horário para postar</li>
+            <li>Alertas de queda de engajamento</li>
+            <li>Checklist de monetização</li>
+            <li class="no">Multi-contas</li>
+            <li class="no">Relatórios PDF</li>
+            <li class="no">Agendamento</li>
+          </ul>
+          <button class="price-btn price-btn-outline" onclick="goStep('step-connect')">Começar grátis</button>
+        </div>
+        <div class="price-card featured">
+          <div class="price-popular">MAIS POPULAR</div>
+          <div class="price-name">Pro</div>
+          <div class="price-val">R$129<span>/mês</span></div>
+          <div class="price-period">Até 5 contas TikTok</div>
+          <ul class="price-features">
+            <li>Tudo do Starter</li>
+            <li>Multi-contas (até 5)</li>
+            <li>Diagnóstico IA diário</li>
+            <li>Agendamento de posts</li>
+            <li>Relatórios PDF</li>
+            <li>Alertas via WhatsApp + e-mail</li>
+            <li>Comparativo entre contas</li>
+            <li class="no">White-label relatórios</li>
+          </ul>
+          <button class="price-btn price-btn-solid" onclick="goStep('step-connect')">Começar grátis</button>
+        </div>
+        <div class="price-card">
+          <div class="price-name">Agency</div>
+          <div class="price-val">R$299<span>/mês</span></div>
+          <div class="price-period">Até 20 contas TikTok</div>
+          <ul class="price-features">
+            <li>Tudo do Pro</li>
+            <li>Até 20 contas</li>
+            <li>Relatórios white-label</li>
+            <li>Benchmark por nicho</li>
+            <li>Painel unificado da agência</li>
+            <li>API de exportação de dados</li>
+            <li>Suporte prioritário</li>
+            <li>Membros da equipe ilimitados</li>
+          </ul>
+          <button class="price-btn price-btn-outline" onclick="goStep('step-connect')">Começar grátis</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Step 3: Conectar TikTok (OAuth) -->
+  <div class="onboard-wrap" id="step-connect" style="display:none">
+    <div class="onboard-card">
+      <div class="onboard-step-bar">
+        <div class="onboard-step done"></div>
+        <div class="onboard-step done"></div>
+        <div class="onboard-step active"></div>
+      </div>
+      <div class="onboard-title">Conecte sua conta TikTok</div>
+      <div class="onboard-sub">Precisamos de permissão para acessar os dados analíticos da sua conta. Você pode revogar o acesso a qualquer momento.</div>
+
+      <div class="permission-list">
+        <div class="perm-item"><span class="perm-ico">📊</span><div class="perm-txt"><strong>Analytics e métricas</strong> — visualizações, engajamento, seguidores, taxa de conclusão</div></div>
+        <div class="perm-item"><span class="perm-ico">👥</span><div class="perm-txt"><strong>Dados da audiência</strong> — demografia, localização, horários de atividade</div></div>
+        <div class="perm-item"><span class="perm-ico">🎬</span><div class="perm-txt"><strong>Informações dos vídeos</strong> — performance individual de cada post</div></div>
+        <div class="perm-item"><span class="perm-ico">🚫</span><div class="perm-txt" style="color:var(--accent2)"><strong>Nunca solicitamos:</strong> senha, permissão de publicar, acesso à conta privada</div></div>
+      </div>
+
+      <div class="tiktok-connect">
+        <div class="tt-ico">𝕋</div>
+        <div class="tt-info">
+          <div class="tt-title">Conta TikTok</div>
+          <div class="tt-sub">Clique para autenticar via OAuth seguro</div>
+        </div>
+        <div class="tt-status" style="color:var(--muted2)">Não conectado</div>
+      </div>
+
+      <button class="btn-full btn-full-tiktok" onclick="simulateOAuth()">
+        <span>𝕋</span> Autorizar com TikTok
+      </button>
+      <button class="btn-full" style="background:none;border:1px solid var(--border2);color:var(--muted2);margin-top:8px;padding:11px;border-radius:8px;cursor:pointer;font-family:'Epilogue',sans-serif;font-size:13px" onclick="showApp()">Pular por agora (demo)</button>
+    </div>
+  </div>
+
+</div><!-- /onboardWrap -->
+
+<!-- ===================== APP ===================== -->
+<div id="appWrap" style="display:none">
+  <div class="sb-overlay" id="sbOverlay" onclick="closeSb()"></div>
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="logo-area">
+      <div style="width:30px;height:30px;background:var(--accent);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;box-shadow:0 0 16px rgba(0,229,255,.35)">◈</div>
+      <div style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:18px">Clarity</div>
+      <div class="logo-beta">BETA</div>
+    </div>
+
+    <!-- Account selector -->
+    <div class="account-selector" onclick="showScreen('accounts')">
+      <div class="acc-sel-avatar" style="background:linear-gradient(135deg,#00e5ff,#00b4d8)">🎵</div>
+      <div class="acc-sel-info">
+        <div class="acc-sel-name">Studio Beats</div>
+        <div class="acc-sel-handle">@studiobeats.br</div>
+      </div>
+      <div class="acc-sel-arrow">⌄</div>
+    </div>
+
+    <nav class="nav">
+      <div class="nav-group-label">Visão Geral</div>
+      <div class="nav-item active" data-screen="agency" onclick="navClick(this,'agency')"><span class="nav-icon">⊞</span> Multi-contas</div>
+      <div class="nav-item" data-screen="performance" onclick="navClick(this,'performance')"><span class="nav-icon">◎</span> Performance</div>
+      <div class="nav-item" data-screen="diagnosis" onclick="navClick(this,'diagnosis')"><span class="nav-icon">🧠</span> Diagnóstico IA</div>
+      <div class="nav-item" data-screen="monetization" onclick="navClick(this,'monetization')"><span class="nav-icon">💰</span> Monetização</div>
+
+      <div class="nav-group-label">Ferramentas</div>
+      <div class="nav-item" data-screen="schedule" onclick="navClick(this,'schedule')"><span class="nav-icon">📅</span> Agendamento</div>
+      <div class="nav-item" data-screen="reports" onclick="navClick(this,'reports')"><span class="nav-icon">📄</span> Relatórios</div>
+      <div class="nav-item" data-screen="alerts" onclick="navClick(this,'alerts')">
+        <span class="nav-icon">🔔</span> Alertas
+        <span class="nav-badge">3</span>
+      </div>
+
+      <div class="nav-group-label">Conta</div>
+      <div class="nav-item" data-screen="settings" onclick="navClick(this,'settings')"><span class="nav-icon">⚙</span> Configurações</div>
+      <div class="nav-item" data-screen="pricing" onclick="navClick(this,'pricing')"><span class="nav-icon">◈</span> Planos</div>
+    </nav>
+
+    <div class="plan-card">
+      <div class="plan-name">Plano Pro</div>
+      <div class="plan-info">5 contas · 3 ativas<br>Renova em 18 dias</div>
+      <button class="plan-upgrade" onclick="navClick(document.querySelector('[data-screen=pricing]'),'pricing')">↑ Ver Agency</button>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+    <!-- TOPBAR -->
+    <div class="topbar">
+      <div style="display:flex;align-items:center;gap:12px">
+        <div class="hamburger" onclick="toggleSb()"><span></span><span></span><span></span></div>
+        <div class="topbar-title" id="topbarTitle">
+          <span id="topbarTitleText">Multi-contas</span>
+          <div class="live-pill"><span class="live-dot"></span>ao vivo</div>
+        </div>
+      </div>
+      <div class="topbar-right">
+        <div class="period-toggle">
+          <button class="period-btn active" onclick="setPeriod(this)">7d</button>
+          <button class="period-btn" onclick="setPeriod(this)">30d</button>
+          <button class="period-btn" onclick="setPeriod(this)">90d</button>
+        </div>
+        <div class="topbar-avatar">AG</div>
+      </div>
+    </div>
+
+    <!-- CONTENT -->
+    <div class="content">
+
+      <!-- ===== SCREEN: AGENCY (multi-accounts) ===== -->
+      <div class="screen active" id="screen-agency">
+        <div class="page-hdr">
+          <div class="page-title">Painel da Agência</div>
+          <div class="page-sub">6 contas monitoradas · Última sincronização há 2 min</div>
+        </div>
+
+        <div class="stat-grid">
+          <div class="stat-card c-cyan">
+            <div class="stat-label">Visualizações Totais</div>
+            <div class="stat-val">4.2M</div>
+            <div class="stat-delta up">↑ 18% vs semana anterior</div>
+          </div>
+          <div class="stat-card c-purple">
+            <div class="stat-label">Seguidores Totais</div>
+            <div class="stat-val">312K</div>
+            <div class="stat-delta up">↑ +4.8K novos</div>
+          </div>
+          <div class="stat-card c-pink">
+            <div class="stat-label">Eng. Médio</div>
+            <div class="stat-val">3.4%</div>
+            <div class="stat-delta down">↓ queda em 2 contas</div>
+          </div>
+          <div class="stat-card c-warn">
+            <div class="stat-label">Alertas Ativos</div>
+            <div class="stat-val">3</div>
+            <div class="stat-delta neutral">⚠ requer atenção</div>
+          </div>
+        </div>
+
+        <div class="card-title" style="margin-bottom:14px">
+          <span style="font-family:'Bricolage Grotesque',sans-serif;font-size:15px;font-weight:700">Contas Monitoradas</span>
+          <button class="btn-sm btn-primary" onclick="showToast('Em breve: fluxo de adicionar conta','info')">+ Adicionar conta</button>
+        </div>
+
+        <div class="account-grid">
+          <div class="acc-card" onclick="navClick(document.querySelector('[data-screen=performance]'),'performance')">
+            <div class="acc-card-top">
+              <div class="acc-av" style="background:linear-gradient(135deg,#00e5ff22,#00b4d822)">🎵</div>
+              <div><div class="acc-name">Studio Beats</div><div class="acc-handle">@studiobeats.br</div></div>
+              <div class="acc-status s-ok">● Saudável</div>
+            </div>
+            <div class="acc-metrics">
+              <div class="acc-m"><div class="acc-m-val">1.2M</div><div class="acc-m-lbl">Views</div></div>
+              <div class="acc-m"><div class="acc-m-val">89K</div><div class="acc-m-lbl">Seguid.</div></div>
+              <div class="acc-m"><div class="acc-m-val">5.1%</div><div class="acc-m-lbl">Eng.</div></div>
+            </div>
+            <div class="mini-prog"><div class="mini-prog-fill" style="width:82%;background:var(--accent)"></div></div>
+          </div>
+
+          <div class="acc-card alert-card">
+            <div class="acc-card-top">
+              <div class="acc-av" style="background:linear-gradient(135deg,#ff4d6d22,#ff9f4322)">👗</div>
+              <div><div class="acc-name">Moda Atual</div><div class="acc-handle">@modaatual_</div></div>
+              <div class="acc-status s-alert">⚠ Queda</div>
+            </div>
+            <div class="acc-metrics">
+              <div class="acc-m"><div class="acc-m-val" style="color:var(--accent2)">210K</div><div class="acc-m-lbl">Views</div></div>
+              <div class="acc-m"><div class="acc-m-val">54K</div><div class="acc-m-lbl">Seguid.</div></div>
+              <div class="acc-m"><div class="acc-m-val" style="color:var(--accent2)">1.2%</div><div class="acc-m-lbl">Eng.</div></div>
+            </div>
+            <div class="mini-prog"><div class="mini-prog-fill" style="width:24%;background:var(--accent2)"></div></div>
+          </div>
+
+          <div class="acc-card">
+            <div class="acc-card-top">
+              <div class="acc-av" style="background:linear-gradient(135deg,#c77dff22,#ec489922)">💄</div>
+              <div><div class="acc-name">Beleza Lab</div><div class="acc-handle">@belezalab.co</div></div>
+              <div class="acc-status s-ok">● Saudável</div>
+            </div>
+            <div class="acc-metrics">
+              <div class="acc-m"><div class="acc-m-val">890K</div><div class="acc-m-lbl">Views</div></div>
+              <div class="acc-m"><div class="acc-m-val">71K</div><div class="acc-m-lbl">Seguid.</div></div>
+              <div class="acc-m"><div class="acc-m-val">4.3%</div><div class="acc-m-lbl">Eng.</div></div>
+            </div>
+            <div class="mini-prog"><div class="mini-prog-fill" style="width:68%;background:var(--accent3)"></div></div>
+          </div>
+
+          <div class="acc-card warn-card">
+            <div class="acc-card-top">
+              <div class="acc-av" style="background:linear-gradient(135deg,#ffd16622,#f9731622)">🏋️</div>
+              <div><div class="acc-name">Fit Zone BR</div><div class="acc-handle">@fitzone.brasil</div></div>
+              <div class="acc-status s-warn">↗ Crescendo</div>
+            </div>
+            <div class="acc-metrics">
+              <div class="acc-m"><div class="acc-m-val">640K</div><div class="acc-m-lbl">Views</div></div>
+              <div class="acc-m"><div class="acc-m-val">38K</div><div class="acc-m-lbl">Seguid.</div></div>
+              <div class="acc-m"><div class="acc-m-val">3.9%</div><div class="acc-m-lbl">Eng.</div></div>
+            </div>
+            <div class="mini-prog"><div class="mini-prog-fill" style="width:55%;background:var(--warn)"></div></div>
+          </div>
+
+          <div class="acc-card">
+            <div class="acc-card-top">
+              <div class="acc-av" style="background:linear-gradient(135deg,#0ea5e922,#6366f122)">💻</div>
+              <div><div class="acc-name">Tech Rápido</div><div class="acc-handle">@techrapido</div></div>
+              <div class="acc-status s-ok">● Saudável</div>
+            </div>
+            <div class="acc-metrics">
+              <div class="acc-m"><div class="acc-m-val">780K</div><div class="acc-m-lbl">Views</div></div>
+              <div class="acc-m"><div class="acc-m-val">45K</div><div class="acc-m-lbl">Seguid.</div></div>
+              <div class="acc-m"><div class="acc-m-val">4.7%</div><div class="acc-m-lbl">Eng.</div></div>
+            </div>
+            <div class="mini-prog"><div class="mini-prog-fill" style="width:74%;background:#0ea5e9"></div></div>
+          </div>
+
+          <div class="acc-card alert-card" onclick="navClick(document.querySelector('[data-screen=alerts]'),'alerts')">
+            <div class="acc-card-top">
+              <div class="acc-av" style="background:linear-gradient(135deg,#10b98122,#84cc1622)">🌱</div>
+              <div><div class="acc-name">Verde Vivo</div><div class="acc-handle">@verdevivo.br</div></div>
+              <div class="acc-status s-alert">🚨 Shadowban</div>
+            </div>
+            <div class="acc-metrics">
+              <div class="acc-m"><div class="acc-m-val" style="color:var(--accent2)">48K</div><div class="acc-m-lbl">Views</div></div>
+              <div class="acc-m"><div class="acc-m-val">15K</div><div class="acc-m-lbl">Seguid.</div></div>
+              <div class="acc-m"><div class="acc-m-val" style="color:var(--accent2)">0.8%</div><div class="acc-m-lbl">Eng.</div></div>
+            </div>
+            <div class="mini-prog"><div class="mini-prog-fill" style="width:10%;background:var(--accent2)"></div></div>
+          </div>
+        </div>
+
+        <!-- Error state example: API offline -->
+        <div class="card" style="margin-top:4px">
+          <div class="card-title">Estado de erro — API TikTok indisponível <span class="card-tag tag-warn">Exemplo</span></div>
+          <div class="error-state" style="padding:30px">
+            <div class="error-icon">🔌</div>
+            <div class="error-title">TikTok API temporariamente indisponível</div>
+            <div class="error-desc">Não conseguimos sincronizar os dados da conta @modaatual_ agora. Os dados exibidos são do último sync (há 3h). Tentaremos novamente automaticamente.</div>
+            <button class="btn-sm btn-outline" onclick="showToast('Sincronizando...','info')">Tentar novamente</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== SCREEN: PERFORMANCE ===== -->
+      <div class="screen" id="screen-performance">
+        <div class="page-hdr">
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:4px">
+            <div style="width:42px;height:42px;border-radius:12px;background:linear-gradient(135deg,#00e5ff22,#00b4d822);display:flex;align-items:center;justify-content:center;font-size:19px">🎵</div>
+            <div><div class="page-title" style="font-size:19px;margin:0">Studio Beats</div><div class="page-sub">@studiobeats.br · 89K seguidores</div></div>
+          </div>
+        </div>
+
+        <div class="stat-grid">
+          <div class="stat-card c-cyan"><div class="stat-label">Visualizações</div><div class="stat-val">1.2M</div><div class="stat-delta up">↑ 18% esta semana</div></div>
+          <div class="stat-card c-green"><div class="stat-label">Taxa de Conclusão</div><div class="stat-val">67%</div><div class="stat-delta up">↑ acima da média</div></div>
+          <div class="stat-card c-purple"><div class="stat-label">Engajamento</div><div class="stat-val">5.1%</div><div class="stat-delta up">↑ ótimo p/ nicho</div></div>
+          <div class="stat-card c-pink"><div class="stat-label">Novos Seguidores</div><div class="stat-val">+2.4K</div><div class="stat-delta up">↑ últimos 7 dias</div></div>
+        </div>
+
+        <div class="grid-2-1" style="margin-bottom:16px">
+          <div class="card">
+            <div class="card-title">Visualizações por dia <span class="card-tag tag-up">↑ tendência positiva</span></div>
+            <div class="chart-wrap">
+              <svg class="chart-svg" viewBox="0 0 580 130" preserveAspectRatio="none" style="height:130px">
+                <defs>
+                  <linearGradient id="g1" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#00e5ff" stop-opacity=".25"/>
+                    <stop offset="100%" stop-color="#00e5ff" stop-opacity="0"/>
+                  </linearGradient>
+                </defs>
+                <line x1="0" y1="32" x2="580" y2="32" stroke="rgba(255,255,255,.04)" stroke-width="1"/>
+                <line x1="0" y1="64" x2="580" y2="64" stroke="rgba(255,255,255,.04)" stroke-width="1"/>
+                <line x1="0" y1="96" x2="580" y2="96" stroke="rgba(255,255,255,.04)" stroke-width="1"/>
+                <path d="M0,95 C50,90 80,55 130,50 C180,45 200,75 250,60 C300,45 320,25 370,20 C420,15 440,38 490,28 C530,20 560,10 580,6 L580,130 L0,130Z" fill="url(#g1)"/>
+                <path d="M0,95 C50,90 80,55 130,50 C180,45 200,75 250,60 C300,45 320,25 370,20 C420,15 440,38 490,28 C530,20 560,10 580,6" fill="none" stroke="#00e5ff" stroke-width="2.5" stroke-linecap="round"/>
+                <circle cx="370" cy="20" r="4" fill="#00e5ff"/>
+                <circle cx="580" cy="6" r="5" fill="#00e5ff" stroke="rgba(0,229,255,.3)" stroke-width="6"/>
+                <text x="2" y="126" fill="#5a5a72" font-size="10" font-family="Epilogue">Seg</text>
+                <text x="78" y="126" fill="#5a5a72" font-size="10" font-family="Epilogue">Ter</text>
+                <text x="158" y="126" fill="#5a5a72" font-size="10" font-family="Epilogue">Qua</text>
+                <text x="240" y="126" fill="#5a5a72" font-size="10" font-family="Epilogue">Qui</text>
+                <text x="320" y="126" fill="#5a5a72" font-size="10" font-family="Epilogue">Sex</text>
+                <text x="402" y="126" fill="#5a5a72" font-size="10" font-family="Epilogue">Sáb</text>
+                <text x="490" y="126" fill="#5a5a72" font-size="10" font-family="Epilogue">Dom</text>
+              </svg>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-title">Origem do tráfego</div>
+            <div style="display:flex;flex-direction:column;gap:10px">
+              <div>
+                <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:5px"><span>Para Você (FYP)</span><span style="color:var(--accent);font-weight:600">62%</span></div>
+                <div style="height:5px;background:var(--surface3);border-radius:3px;overflow:hidden"><div style="height:100%;width:62%;background:var(--accent);border-radius:3px"></div></div>
+              </div>
+              <div>
+                <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:5px"><span>Seguidores</span><span style="color:var(--accent3);font-weight:600">21%</span></div>
+                <div style="height:5px;background:var(--surface3);border-radius:3px;overflow:hidden"><div style="height:100%;width:21%;background:var(--accent3);border-radius:3px"></div></div>
+              </div>
+              <div>
+                <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:5px"><span>Busca</span><span style="color:var(--accent4);font-weight:600">11%</span></div>
+                <div style="height:5px;background:var(--surface3);border-radius:3px;overflow:hidden"><div style="height:100%;width:11%;background:var(--accent4);border-radius:3px"></div></div>
+              </div>
+              <div>
+                <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:5px"><span>Outros</span><span style="color:var(--muted2);font-weight:600">6%</span></div>
+                <div style="height:5px;background:var(--surface3);border-radius:3px;overflow:hidden"><div style="height:100%;width:6%;background:var(--muted);border-radius:3px"></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid-2" style="margin-bottom:16px">
+          <div class="card">
+            <div class="card-title">Top vídeos da semana <span class="card-tag tag-info">últimos 7 dias</span></div>
+            <div style="display:flex;flex-direction:column;gap:10px">
+              <div style="display:flex;align-items:center;gap:12px;padding:10px;background:var(--surface2);border-radius:10px">
+                <div style="width:38px;height:38px;background:var(--surface3);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px">🎵</div>
+                <div style="flex:1"><div style="font-size:12.5px;font-weight:600;margin-bottom:2px">Tutorial: 3 acordes que viralizam</div><div style="font-size:11px;color:var(--muted2)">34s · há 3 dias</div></div>
+                <div style="text-align:right"><div style="font-size:13px;font-weight:700;color:var(--accent)">342K</div><div style="font-size:10px;color:var(--muted2)">views</div></div>
+              </div>
+              <div style="display:flex;align-items:center;gap:12px;padding:10px;background:var(--surface2);border-radius:10px">
+                <div style="width:38px;height:38px;background:var(--surface3);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px">🎸</div>
+                <div style="flex:1"><div style="font-size:12.5px;font-weight:600;margin-bottom:2px">POV: produzindo no celular</div><div style="font-size:11px;color:var(--muted2)">28s · há 5 dias</div></div>
+                <div style="text-align:right"><div style="font-size:13px;font-weight:700;color:var(--accent)">218K</div><div style="font-size:10px;color:var(--muted2)">views</div></div>
+              </div>
+              <div style="display:flex;align-items:center;gap:12px;padding:10px;background:var(--surface2);border-radius:10px">
+                <div style="width:38px;height:38px;background:var(--surface3);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px">🎤</div>
+                <div style="flex:1"><div style="font-size:12.5px;font-weight:600;margin-bottom:2px">Erro clássico de iniciantes</div><div style="font-size:11px;color:var(--muted2)">41s · há 6 dias</div></div>
+                <div style="text-align:right"><div style="font-size:13px;font-weight:700;color:var(--accent)">187K</div><div style="font-size:10px;color:var(--muted2)">views</div></div>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-title">Retenção de audiência <span class="card-tag tag-warn">atenção ao hook</span></div>
+            <svg viewBox="0 0 300 120" style="width:100%;height:110px">
+              <defs><linearGradient id="retGrad" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#00e5ff"/><stop offset="100%" stop-color="#ff4d6d"/></linearGradient></defs>
+              <line x1="0" y1="25" x2="300" y2="25" stroke="rgba(255,255,255,.04)" stroke-width="1"/>
+              <line x1="0" y1="60" x2="300" y2="60" stroke="rgba(255,255,255,.04)" stroke-width="1"/>
+              <line x1="0" y1="95" x2="300" y2="95" stroke="rgba(255,255,255,.04)" stroke-width="1"/>
+              <path d="M0,15 C20,16 40,20 60,28 C80,36 100,42 130,55 C160,68 200,80 250,92 C275,98 290,102 300,104" fill="none" stroke="url(#retGrad)" stroke-width="2.5" stroke-linecap="round"/>
+              <text x="2" y="115" fill="#5a5a72" font-size="9" font-family="Epilogue">0s</text>
+              <text x="68" y="115" fill="#5a5a72" font-size="9" font-family="Epilogue">25%</text>
+              <text x="138" y="115" fill="#5a5a72" font-size="9" font-family="Epilogue">50%</text>
+              <text x="208" y="115" fill="#5a5a72" font-size="9" font-family="Epilogue">75%</text>
+              <text x="272" y="115" fill="#5a5a72" font-size="9" font-family="Epilogue">100%</text>
+              <text x="0" y="12" fill="#00e5ff" font-size="9" font-family="Epilogue">100%</text>
+              <text x="0" y="58" fill="#5a5a72" font-size="9" font-family="Epilogue">55%</text>
+              <text x="0" y="93" fill="#ff4d6d" font-size="9" font-family="Epilogue">20%</text>
+            </svg>
+            <div style="font-size:11.5px;color:var(--accent2);margin-top:4px">⚠ Perda acentuada nos primeiros 4s. Revise o hook.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== SCREEN: DIAGNOSIS ===== -->
+      <div class="screen" id="screen-diagnosis">
+        <div class="page-hdr">
+          <div class="page-title">Diagnóstico IA</div>
+          <div class="page-sub">Studio Beats · Gerado hoje às 08:14 · Powered by Claude</div>
+        </div>
+
+        <div class="grid-2-1" style="margin-bottom:16px">
+          <div class="card">
+            <div class="card-title">🧠 Análise geral da semana <span class="card-tag tag-up">conta saudável</span></div>
+            <div style="background:var(--surface2);border-radius:10px;padding:16px;margin-bottom:16px;border-left:3px solid var(--accent);font-size:13.5px;line-height:1.7;color:var(--muted2)">
+              Sua conta teve uma <strong style="color:var(--text)">semana acima da média</strong>. O vídeo "Tutorial: 3 acordes que viralizam" foi o destaque com 342K views — esse formato educativo de 34s está funcionando muito bem para o seu nicho. <br><br>O ponto de atenção está na <strong style="color:var(--warn)">retenção nos primeiros segundos</strong>: 3 dos 5 vídeos postados essa semana perderam mais de 40% da audiência antes dos 4 segundos, o que sinaliza problema no hook de abertura. Isso não prejudicou o resultado geral porque o conteúdo "pós-hook" tem boa performance, mas corrigir isso pode dobrar o alcance.
+            </div>
+
+            <div class="diag-list">
+              <div class="diag-item">
+                <div class="diag-bullet" style="background:var(--accent4)"></div>
+                <div>
+                  <div class="diag-txt"><span class="diag-strong">Melhor horário:</span> Poste às 19h–20h nas terças e quintas</div>
+                  <div class="diag-sub">Seu público é 34% mais ativo nesses horários. Testar sábado às 11h pode ser promissor.</div>
+                </div>
+              </div>
+              <div class="diag-item">
+                <div class="diag-bullet" style="background:var(--accent)"></div>
+                <div>
+                  <div class="diag-txt"><span class="diag-strong">Formato campeão:</span> vídeos entre 28–45 segundos</div>
+                  <div class="diag-sub">Taxa de conclusão 2x maior nesse range vs. vídeos acima de 60s.</div>
+                </div>
+              </div>
+              <div class="diag-item">
+                <div class="diag-bullet" style="background:var(--warn)"></div>
+                <div>
+                  <div class="diag-txt"><span class="diag-strong">Problema de hook:</span> 3 vídeos perderam 40%+ nos primeiros 4s</div>
+                  <div class="diag-sub">Recomendação: comece com afirmação surpreendente ou demonstração visual imediata — sem introdução.</div>
+                </div>
+              </div>
+              <div class="diag-item">
+                <div class="diag-bullet" style="background:var(--accent3)"></div>
+                <div>
+                  <div class="diag-txt"><span class="diag-strong">Oportunidade de nicho:</span> #musicabraseducativa em alta</div>
+                  <div class="diag-sub">Hashtag com 40% menos concorrência e 3x mais engajamento médio esta semana.</div>
+                </div>
+              </div>
+              <div class="diag-item">
+                <div class="diag-bullet" style="background:var(--accent2)"></div>
+                <div>
+                  <div class="diag-txt"><span class="diag-strong">Comentários sem resposta:</span> 47 nos últimos 3 dias</div>
+                  <div class="diag-sub">Responder comentários nas primeiras 2h aumenta o score de engajamento e favorece distribuição pelo algoritmo.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div style="display:flex;flex-direction:column;gap:14px">
+            <div class="card">
+              <div class="card-title">Score da conta</div>
+              <div style="display:flex;justify-content:center;margin-bottom:16px">
+                <div class="ring-wrap">
+                  <svg width="90" height="90" viewBox="0 0 100 100">
+                    <circle cx="50" cy="50" r="38" fill="none" stroke="rgba(255,255,255,.06)" stroke-width="8"/>
+                    <circle cx="50" cy="50" r="38" fill="none" stroke="#00e5ff" stroke-width="8" stroke-dasharray="239" stroke-dashoffset="48" stroke-linecap="round" transform="rotate(-90 50 50)"/>
+                  </svg>
+                  <div class="ring-label"><span class="ring-pct">80</span><span class="ring-lbl-sm">/ 100</span></div>
+                </div>
+              </div>
+              <div style="font-size:12px;color:var(--muted2);text-align:center;line-height:1.6">Conta saudável. Corrigir o hook pode levar o score para 90+</div>
+            </div>
+            <div class="card">
+              <div class="card-title">Próximas ações</div>
+              <div style="display:flex;flex-direction:column;gap:8px">
+                <div style="display:flex;gap:10px;align-items:center;font-size:12.5px;padding:9px 12px;background:var(--surface2);border-radius:8px">
+                  <span>⏰</span><span>Agendar post hoje às 19h</span>
+                  <button class="btn-sm btn-primary" style="margin-left:auto;font-size:11px;padding:4px 10px" onclick="navClick(document.querySelector('[data-screen=schedule]'),'schedule')">Ir</button>
+                </div>
+                <div style="display:flex;gap:10px;align-items:center;font-size:12.5px;padding:9px 12px;background:var(--surface2);border-radius:8px">
+                  <span>💬</span><span>Responder 47 comentários</span>
+                  <button class="btn-sm btn-outline" style="margin-left:auto;font-size:11px;padding:4px 10px" onclick="showToast('Abrindo TikTok...','info')">Ver</button>
+                </div>
+                <div style="display:flex;gap:10px;align-items:center;font-size:12.5px;padding:9px 12px;background:var(--surface2);border-radius:8px">
+                  <span>✂️</span><span>Encurtar próximo vídeo (máx 45s)</span>
+                  <button class="btn-sm btn-outline" style="margin-left:auto;font-size:11px;padding:4px 10px" onclick="showToast('Dica salva!','success')">Ok</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== SCREEN: MONETIZATION ===== -->
+      <div class="screen" id="screen-monetization">
+        <div class="page-hdr">
+          <div class="page-title">Monetização</div>
+          <div class="page-sub">Studio Beats · Elegibilidade e potencial de receita</div>
+        </div>
+
+        <div style="background:linear-gradient(135deg,rgba(0,229,255,.07),rgba(199,125,255,.05));border:1px solid rgba(0,229,255,.15);border-radius:var(--radius-lg);padding:24px 28px;margin-bottom:22px;display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap">
+          <div>
+            <div style="font-family:'Bricolage Grotesque',sans-serif;font-size:19px;font-weight:800;margin-bottom:6px">Você está quase lá! 🎯</div>
+            <div style="font-size:13.5px;color:var(--muted2);max-width:400px;line-height:1.65">Faltam apenas <strong style="color:var(--accent)">11.000 views</strong> para o Creator Rewards este mês. No ritmo atual, você chega em <strong style="color:var(--text)">3–4 dias</strong>.</div>
+          </div>
+          <div class="ring-wrap">
+            <svg width="90" height="90" viewBox="0 0 100 100">
+              <circle cx="50" cy="50" r="38" fill="none" stroke="rgba(255,255,255,.06)" stroke-width="8"/>
+              <circle cx="50" cy="50" r="38" fill="none" stroke="#00e5ff" stroke-width="8" stroke-dasharray="239" stroke-dashoffset="26" stroke-linecap="round" transform="rotate(-90 50 50)"/>
+            </svg>
+            <div class="ring-label"><span class="ring-pct">89%</span><span class="ring-lbl-sm">concluído</span></div>
+          </div>
+        </div>
+
+        <div class="grid-2" style="margin-bottom:20px">
+          <div>
+            <div style="font-family:'Bricolage Grotesque',sans-serif;font-size:14px;font-weight:700;margin-bottom:12px">Checklist Creator Rewards</div>
+            <div class="check-list">
+              <div class="check-row"><div class="check-ico">✅</div><div class="check-lbl">Seguidores mínimos</div><div><div class="check-val col-ok">89K</div><div class="check-need">Req: 10.000</div></div></div>
+              <div class="check-row"><div class="check-ico">⏳</div><div class="check-lbl">Views (30 dias)</div><div><div class="check-val col-warn">89K/100K</div><div class="check-need">Faltam 11K</div></div></div>
+              <div class="check-row"><div class="check-ico">✅</div><div class="check-lbl">Conta com +30 dias</div><div><div class="check-val col-ok">14 meses</div><div class="check-need">✓ ok</div></div></div>
+              <div class="check-row"><div class="check-ico">✅</div><div class="check-lbl">Sem violações</div><div><div class="check-val col-ok">Limpa</div><div class="check-need">90 dias</div></div></div>
+              <div class="check-row"><div class="check-ico">✅</div><div class="check-lbl">Conta Creator/Business</div><div><div class="check-val col-ok">Creator</div><div class="check-need">✓ ok</div></div></div>
+              <div class="check-row"><div class="check-ico">✅</div><div class="check-lbl">Vídeos 60s+</div><div><div class="check-val col-ok">4 vídeos</div><div class="check-need">esta semana</div></div></div>
+            </div>
+          </div>
+          <div>
+            <div style="font-family:'Bricolage Grotesque',sans-serif;font-size:14px;font-weight:700;margin-bottom:12px">Potencial de receita</div>
+            <div class="check-list">
+              <div class="check-row"><div class="check-ico">💰</div><div class="check-lbl">Creator Rewards</div><div><div class="check-val col-cyan">R$280–490/mês</div><div class="check-need">estimado</div></div></div>
+              <div class="check-row"><div class="check-ico">🤝</div><div class="check-lbl">Brand deals</div><div><div class="check-val" style="color:var(--accent3)">R$1.2–3.5K/post</div><div class="check-need">nicho música</div></div></div>
+              <div class="check-row"><div class="check-ico">🛍️</div><div class="check-lbl">TikTok Shop</div><div><div class="check-val col-warn">10–20%</div><div class="check-need">comissão</div></div></div>
+              <div class="check-row"><div class="check-ico">🎁</div><div class="check-lbl">Gifts em Lives</div><div><div class="check-val" style="color:var(--accent2)">Ativo</div><div class="check-need">1K+ seguid.</div></div></div>
+              <div class="check-row" style="background:rgba(0,229,255,.04);border-color:rgba(0,229,255,.15)"><div class="check-ico">📊</div><div class="check-lbl"><strong>Total potencial/mês</strong></div><div><div class="check-val col-cyan" style="font-size:16px">R$2k–8k</div><div class="check-need">combinando</div></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /content -->
+  </main>
+
+  <!-- BOTTOM NAV -->
+  <nav class="bottom-nav">
+    <div class="bnav-item active" id="bn-agency" onclick="navClick(document.querySelector('[data-screen=agency]'),'agency')"><span class="bnav-ico">⊞</span>Contas</div>
+    <div class="bnav-item" id="bn-performance" onclick="navClick(document.querySelector('[data-screen=performance]'),'performance')"><span class="bnav-ico">◎</span>Performance</div>
+    <div class="bnav-item" id="bn-diagnosis" onclick="navClick(document.querySelector('[data-screen=diagnosis]'),'diagnosis')"><span class="bnav-ico">🧠</span>IA</div>
+    <div class="bnav-item" id="bn-alerts" onclick="navClick(document.querySelector('[data-screen=alerts]'),'alerts')"><span class="bnav-ico">🔔</span>Alertas</div>
+    <div class="bnav-item" id="bn-settings" onclick="navClick(document.querySelector('[data-screen=settings]'),'settings')"><span class="bnav-ico">⚙</span>Config</div>
+  </nav>
+
+</div><!-- /appWrap -->
+
+<script>
+// ======= ADMIN CREDENTIALS =======
+const ADMIN = { user: 'admin', pass: 'teste' };
+
+function fillAdmin() {
+  document.getElementById('loginEmail').value = ADMIN.user;
+  document.getElementById('loginPassword').value = ADMIN.pass;
+  document.getElementById('loginError').style.display = 'none';
+  document.getElementById('loginEmail').focus();
+}
+
+function togglePwd() {
+  const inp = document.getElementById('loginPassword');
+  const eye = document.getElementById('pwdEye');
+  if (inp.type === 'password') { inp.type = 'text'; eye.textContent = '🙈'; }
+  else { inp.type = 'password'; eye.textContent = '👁'; }
+}
+
+function doLogin() {
+  const email = document.getElementById('loginEmail').value.trim();
+  const pass  = document.getElementById('loginPassword').value.trim();
+  const err   = document.getElementById('loginError');
+
+  if ((email === ADMIN.user || email === 'admin@clarity.app') && pass === ADMIN.pass) {
+    err.style.display = 'none';
+    showLoading('Autenticando...', 900, showApp);
+  } else {
+    err.style.display = 'block';
+    document.getElementById('loginPassword').value = '';
+    document.getElementById('loginPassword').focus();
+    const card = document.querySelector('#step-login .onboard-card');
+    card.style.transition = 'transform .08s';
+    const steps = [-8,8,-5,5,0];
+    steps.forEach((v,i) => setTimeout(()=>card.style.transform=`translateX(${v}px)`,i*80));
+    setTimeout(()=>card.style.transform='', 400);
+  }
+}
+
+// ======= ONBOARDING =======
+function goStep(id) {
+  document.querySelectorAll('#onboardWrap > div').forEach(d => d.style.display='none');
+  const el = document.getElementById(id);
+  el.style.display = 'flex';
+  el.style.flexDirection = 'column';
+  el.style.alignItems = 'center';
+  el.style.justifyContent = 'center';
+}
+
+function simulateOAuth() {
+  showLoading('Conectando com TikTok...', 2200, () => {
+    document.querySelector('.tiktok-connect .tt-status').textContent = '✓ Conectado';
+    document.querySelector('.tiktok-connect .tt-status').style.color = 'var(--accent4)';
+    showToast('Conta TikTok conectada com sucesso!','success');
+    setTimeout(showApp, 800);
+  });
+}
+
+function showApp() {
+  document.getElementById('onboardWrap').style.display = 'none';
+  document.getElementById('appWrap').style.display = 'flex';
+  setTimeout(animateBars, 200);
+}
+
+// ======= NAVIGATION =======
+const screenTitles = {
+  agency:'Multi-contas', performance:'Studio Beats', diagnosis:'Diagnóstico IA',
+  monetization:'Monetização', schedule:'Agendamento', reports:'Relatórios',
+  alerts:'Alertas', settings:'Configurações', pricing:'Planos', accounts:'Trocar conta'
+};
+
+function navClick(el, screenId) {
+  document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+  if (el) el.classList.add('active');
+  showScreen(screenId);
+  closeSb();
+}
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  const s = document.getElementById('screen-'+id);
+  if (s) s.classList.add('active');
+  document.getElementById('topbarTitleText').textContent = screenTitles[id] || id;
+  document.querySelectorAll('.bnav-item').forEach(b => b.classList.remove('active'));
+  const bn = document.getElementById('bn-'+id);
+  if (bn) bn.classList.add('active');
+  setTimeout(animateBars, 100);
+}
+
+// ======= SIDEBAR =======
+function toggleSb() {
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('sbOverlay').classList.toggle('open');
+}
+function closeSb() {
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('sbOverlay').classList.remove('open');
+}
+
+// ======= PERIOD =======
+function setPeriod(el) {
+  document.querySelectorAll('.period-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+}
+
+// ======= LOADING =======
+function showLoading(msg, duration, cb) {
+  const overlay = document.getElementById('loadingOverlay');
+  document.getElementById('loadingMsg').textContent = msg;
+  overlay.style.display = 'flex';
+  setTimeout(() => {
+    overlay.style.display = 'none';
+    if (cb) cb();
+    else showToast('Concluído!','success');
+  }, duration || 1500);
+}
+
+// ======= TOASTS =======
+let toastCount = 0;
+function showToast(msg, type='info') {
+  const icons = {success:'✅', error:'❌', warn:'⚠️', info:'ℹ️'};
+  const area = document.getElementById('toastArea');
+  const id = 'toast-'+(++toastCount);
+  const t = document.createElement('div');
+  t.className = `toast ${type}`;
+  t.id = id;
+  t.innerHTML = `<span class="toast-ico">${icons[type]}</span><span class="toast-txt">${msg}</span>`;
+  area.appendChild(t);
+  setTimeout(() => { const el=document.getElementById(id); if(el) el.remove(); }, 3500);
+}
+
+// ======= BARS ANIMATION =======
+function animateBars() {
+  document.querySelectorAll('.mini-prog-fill').forEach(b => {
+    const w = b.style.width;
+    b.style.transition = 'none';
+    b.style.width = '0';
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      b.style.transition = 'width 1.2s cubic-bezier(.16,1,.3,1)';
+      b.style.width = w;
+    }));
+  });
+}
+
+animateBars();
+</script>
+</body>
+</html>
