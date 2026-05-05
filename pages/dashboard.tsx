@@ -681,7 +681,7 @@ function PricingScreen({ plan }: { plan: string }) {
       </div>
       <div style={{ display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:'16px' }}>
         {plans.map(p => (
-          <div key={p.key} style={{ background:'#0f0f1a', border:`1px solid ${p.key===plan?'rgba(0,229,255,.3)':p.key==='pro'?'rgba(0,229,255,.2)':'rgba(255,255,255,.06)'}`, borderRadius:'20px', padding:'24px', position:'relative', background: p.key==='pro'?'linear-gradient(180deg,rgba(0,229,255,.04) 0%,#0f0f1a 100%)':'#0f0f1a' as any }}>
+          <div key={p.key} style={{ background: p.key==='pro' ? 'linear-gradient(180deg,rgba(0,229,255,.04) 0%,#0f0f1a 100%)' : '#0f0f1a', border:`1px solid ${p.key===plan?'rgba(0,229,255,.3)':p.key==='pro'?'rgba(0,229,255,.2)':'rgba(255,255,255,.06)'}`, borderRadius:'20px', padding:'24px', position:'relative' }}>
             {p.key === plan && <div style={{ position:'absolute', top:'-12px', left:'50%', transform:'translateX(-50%)', background:'#00e5ff', color:'#08080e', fontSize:'10px', fontWeight:800, padding:'4px 14px', borderRadius:'20px', whiteSpace:'nowrap' }}>PLANO ATUAL</div>}
             {p.key === 'pro' && p.key !== plan && <div style={{ position:'absolute', top:'-12px', left:'50%', transform:'translateX(-50%)', background:'#00e5ff', color:'#08080e', fontSize:'10px', fontWeight:800, padding:'4px 14px', borderRadius:'20px', whiteSpace:'nowrap' }}>MAIS POPULAR</div>}
             <div style={{ fontWeight:700, fontSize:'15px', marginBottom:'6px' }}>{p.name}</div>
