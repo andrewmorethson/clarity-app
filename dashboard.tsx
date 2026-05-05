@@ -7,6 +7,8 @@ export default function Dashboard() {
   const { data: session, status } = useSession()
   const router = useRouter()
   const [activeScreen, setActiveScreen] = useState('agency')
+  const [mounted, setMounted] = useState(false)
+  useEffect(() => setMounted(true), [])
 
   useEffect(() => {
     if (status === 'unauthenticated') router.push('/login')
@@ -28,7 +30,17 @@ export default function Dashboard() {
     setTimeout(() => setToasts(t => t.filter(x => x.id !== id)), 3500)
   }
 
-  if (status === 'loading') return (
+  async function connectTikTok() {
+    try {
+      showToast("Abrindo TikTok...", "info")
+      const res = await fetch("/api/tiktok/auth-url")
+      const data = await res.json()
+      if (data.url) { window.open(data.url, "_self") }
+      else { showToast("Erro ao gerar link do TikTok", "error") }
+    } catch { showToast("Erro de conexão", "error") }
+  }
+
+  if (status === "loading") return (
     <div style={{ minHeight:'100vh', display:'flex', alignItems:'center', justifyContent:'center', background:'#08080e', flexDirection:'column', gap:'16px' }}>
       <div style={{ width:'40px', height:'40px', border:'3px solid rgba(255,255,255,0.1)', borderTop:'3px solid #00e5ff', borderRadius:'50%', animation:'spin .8s linear infinite' }}/>
       <style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style>
@@ -36,7 +48,7 @@ export default function Dashboard() {
     </div>
   )
 
-  if (!session) return null
+  if (!session || !mounted) return null
 
   const user = session.user as any
   const screens = ['agency','performance','diagnosis','monetization','schedule','reports','alerts','settings','pricing']
@@ -288,7 +300,7 @@ function AgencyScreen({ onNav }: { onNav: (s:string)=>void }) {
       </div>
       <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:'14px' }}>
         <span style={{ fontWeight:700, fontSize:'15px' }}>Contas Monitoradas</span>
-        <button className="btn-primary">+ Adicionar conta</button>
+        <button className="btn-primary" onClick={connectTikTok}>+ Adicionar conta</button>
       </div>
       <div className="acc-grid" style={{ display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:'14px' }}>
         {accounts.map(a => (
@@ -643,7 +655,7 @@ function SettingsScreen({ user }: { user: any }) {
                 <button className={a.statusOk ? 'btn-danger' : 'btn-primary'} style={{ fontSize:'11px', padding:'5px 12px' }}>{a.statusOk ? 'Desconectar' : 'Reconectar'}</button>
               </div>
             ))}
-            <button className="btn-outline" style={{ width:'100%', padding:'10px', marginTop:'4px' }}>+ Adicionar conta</button>
+            <button className="btn-outline" style={{ width:'100%', padding:'10px', marginTop:'4px' }} onClick={connectTikTok}>+ Adicionar conta</button>
           </div>
         </div>
         <div>
@@ -681,7 +693,7 @@ function PricingScreen({ plan }: { plan: string }) {
       </div>
       <div style={{ display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:'16px' }}>
         {plans.map(p => (
-          <div key={p.key} style={{ background:'#0f0f1a', border:`1px solid ${p.key===plan?'rgba(0,229,255,.3)':p.key==='pro'?'rgba(0,229,255,.2)':'rgba(255,255,255,.06)'}`, borderRadius:'20px', padding:'24px', position:'relative', background: p.key==='pro'?'linear-gradient(180deg,rgba(0,229,255,.04) 0%,#0f0f1a 100%)':'#0f0f1a' as any }}>
+          <div key={p.key} style={{ background: p.key==='pro' ? 'linear-gradient(180deg,rgba(0,229,255,.04) 0%,#0f0f1a 100%)' : '#0f0f1a', border:`1px solid ${p.key===plan?'rgba(0,229,255,.3)':p.key==='pro'?'rgba(0,229,255,.2)':'rgba(255,255,255,.06)'}`, borderRadius:'20px', padding:'24px', position:'relative' }}>
             {p.key === plan && <div style={{ position:'absolute', top:'-12px', left:'50%', transform:'translateX(-50%)', background:'#00e5ff', color:'#08080e', fontSize:'10px', fontWeight:800, padding:'4px 14px', borderRadius:'20px', whiteSpace:'nowrap' }}>PLANO ATUAL</div>}
             {p.key === 'pro' && p.key !== plan && <div style={{ position:'absolute', top:'-12px', left:'50%', transform:'translateX(-50%)', background:'#00e5ff', color:'#08080e', fontSize:'10px', fontWeight:800, padding:'4px 14px', borderRadius:'20px', whiteSpace:'nowrap' }}>MAIS POPULAR</div>}
             <div style={{ fontWeight:700, fontSize:'15px', marginBottom:'6px' }}>{p.name}</div>
