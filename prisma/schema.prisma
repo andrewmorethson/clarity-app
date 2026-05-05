@@ -10,9 +10,10 @@ datasource db {
 
 model User {
   id        String   @id @default(cuid())
-  email     String   @unique
-  name      String?
-  plan      String   @default("starter") // starter | pro | agency
+  email        String   @unique
+  name         String?
+  passwordHash String?
+  plan         String   @default("starter") // starter | pro | agency
   caktoId   String?  // ID do cliente no Cakto
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
