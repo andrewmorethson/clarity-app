@@ -228,14 +228,14 @@ export default function Dashboard() {
 
         {/* Screen content */}
         <div className="content-pad" style={{ padding:'28px', flex:1 }}>
-          {activeScreen === 'agency'       && <AgencyScreen onNav={setActiveScreen} />}
+          {activeScreen === 'agency'       && <AgencyScreen onNav={setActiveScreen} onConnect={connectTikTok} />}
           {activeScreen === 'performance'  && <PerformanceScreen />}
           {activeScreen === 'diagnosis'    && <DiagnosisScreen onNav={setActiveScreen} />}
           {activeScreen === 'monetization' && <MonetizationScreen />}
           {activeScreen === 'schedule'     && <ScheduleScreen />}
           {activeScreen === 'reports'      && <ReportsScreen />}
           {activeScreen === 'alerts'       && <AlertsScreen onNav={setActiveScreen} />}
-          {activeScreen === 'settings'     && <SettingsScreen user={user} />}
+          {activeScreen === 'settings'     && <SettingsScreen user={user} onConnect={connectTikTok} />}
           {activeScreen === 'pricing'      && <PricingScreen plan={user?.plan} />}
         </div>
       </div>
@@ -274,7 +274,7 @@ function StatCard({ label, value, delta, deltaUp, color }: any) {
   )
 }
 
-function AgencyScreen({ onNav }: { onNav: (s:string)=>void }) {
+function AgencyScreen({ onNav, onConnect }: { onNav: (s:string)=>void, onConnect: ()=>void }) {
   const accounts = [
     { name:'Studio Beats', handle:'@studiobeats.br', emoji:'🎵', grad:'#00e5ff22,#00b4d822', status:'Saudável', statusClass:'ok', views:'1.2M', followers:'89K', eng:'5.1%', prog:82, progColor:'#00e5ff' },
     { name:'Moda Atual',   handle:'@modaatual_',     emoji:'👗', grad:'#ff4d6d22,#ff9f4322', status:'⚠ Queda',  statusClass:'alert', views:'210K', followers:'54K', eng:'1.2%', prog:24, progColor:'#ff4d6d' },
@@ -300,7 +300,7 @@ function AgencyScreen({ onNav }: { onNav: (s:string)=>void }) {
       </div>
       <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:'14px' }}>
         <span style={{ fontWeight:700, fontSize:'15px' }}>Contas Monitoradas</span>
-        <button className="btn-primary" onClick={connectTikTok}>+ Adicionar conta</button>
+        <button className="btn-primary" onClick={onConnect}>+ Adicionar conta</button>
       </div>
       <div className="acc-grid" style={{ display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:'14px' }}>
         {accounts.map(a => (
@@ -622,7 +622,7 @@ function AlertsScreen({ onNav }: { onNav: (s:string)=>void }) {
   )
 }
 
-function SettingsScreen({ user }: { user: any }) {
+function SettingsScreen({ user, onConnect }: { user: any, onConnect: ()=>void }) {
   return (
     <div>
       <div style={{ marginBottom:'24px' }}>
@@ -655,7 +655,7 @@ function SettingsScreen({ user }: { user: any }) {
                 <button className={a.statusOk ? 'btn-danger' : 'btn-primary'} style={{ fontSize:'11px', padding:'5px 12px' }}>{a.statusOk ? 'Desconectar' : 'Reconectar'}</button>
               </div>
             ))}
-            <button className="btn-outline" style={{ width:'100%', padding:'10px', marginTop:'4px' }} onClick={connectTikTok}>+ Adicionar conta</button>
+            <button className="btn-outline" style={{ width:'100%', padding:'10px', marginTop:'4px' }} onClick={onConnect}>+ Adicionar conta</button>
           </div>
         </div>
         <div>
